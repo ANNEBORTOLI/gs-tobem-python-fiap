@@ -190,6 +190,26 @@ def testar_leitura():
     print("Aviso:", resultado[1])
 
 
+def mostrar_regras():
+    print()
+    print("***** Regras do TôBem *****")
+    print("Check-in: 2 vezes ao dia, às 8h e às 20h.")
+    print("Escala do simulador Wokwi: 1h real = 2s.")
+    print()
+    print("Ordem de decisão (a primeira que valer é a mostrada):")
+    print("1. PERIGO  - SEM CHECK-IN 13h   : ", HORAS_PERIGO, "h ou mais sem check-in")
+    print("2. PERIGO  - CALOR PERIGOSO!    : ", TEMP_PERIGO, "°C ou mais")
+    print("3. PERIGO  - AR MUITO SECO!     : umidade abaixo de", UMID_PERIGO_BAIXA, "%")
+    print("4. PERIGO  - CALOR + UMIDADE!   : umidade acima de", UMID_ALTA, "% e", TEMP_ATENCAO, "°C ou mais")
+    print("5. ATENÇÃO - Faca check-in      : ", HORAS_ATENCAO, "h ou mais sem check-in")
+    print("6. ATENÇÃO - Calor: beba agua   : ", TEMP_ATENCAO, "°C ou mais")
+    print("7. ATENÇÃO - Ar seco            : umidade abaixo de", UMID_ATENCAO_BAIXA, "%")
+    print("8. ATENÇÃO - Ar muito umido     : umidade acima de", UMID_ALTA, "%")
+    print("9. OK      - Tudo bem           : nenhuma das anteriores")
+    print()
+    print("PERIGO de check-in: o síndico ou porteiro é avisado para verificar o apartamento.")
+
+
 # ---------------- Menu do nosso Programa ----------------
 def main():
     opcao = ""
@@ -214,7 +234,7 @@ def main():
         elif opcao == "4":
             testar_leitura()
         elif opcao == "5":
-            print("regras e limites")
+            mostrar_regras()
         elif opcao == "0":
             print("Até logo! Cuide-se.")
         else:
