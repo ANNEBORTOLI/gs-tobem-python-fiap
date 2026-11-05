@@ -25,7 +25,60 @@ registros = [
     ["24:00", 27.5, 88, 3],
 ]
 
-# ---------------- Programa principal ----------------
+# ---------------- Classificação dos Sensores ----------------
+# Seguimos a ordem de Edge: a primeira condição verdadeira vence.
+def classificar(temperatura, umidade, horas_checkin):
+    if horas_checkin >= HORAS_PERIGO:
+        estado = "PERIGO"
+        mensagem = "SEM CHECK-IN 13h"
+    elif temperatura >= TEMP_PERIGO:
+        estado = "PERIGO"
+        mensagem = "CALOR PERIGOSO!"
+    elif umidade < UMID_PERIGO_BAIXA:
+        estado = "PERIGO"
+        mensagem = "AR MUITO SECO!"
+    elif umidade > UMID_ALTA and temperatura >= TEMP_ATENCAO:
+        estado = "PERIGO"
+        mensagem = "CALOR + UMIDADE!"
+    elif horas_checkin >= HORAS_ATENCAO:
+        estado = "ATENÇÃO"
+        mensagem = "Faca check-in"
+    elif temperatura >= TEMP_ATENCAO:
+        estado = "ATENÇÃO"
+        mensagem = "Calor: beba agua"
+    elif umidade < UMID_ATENCAO_BAIXA:
+        estado = "ATENÇÃO"
+        mensagem = "Ar seco"
+    elif umidade > UMID_ALTA:
+        estado = "ATENÇÃO"
+        mensagem = "Ar muito umido"
+    else:
+        estado = "OK"
+        mensagem = "Tudo bem"
+
+    return [estado, mensagem]
+
+
+# ---------------- Opções do menu ----------------
+def mostrar_leituras():
+    print()
+    print("Leituras do dia", DATA)
+    print("Hora | Temp. | Umid. | Sem check-in | Estado | Aviso")
+
+    for registro in registros:
+        hora = registro[0]
+        temperatura = registro[1]
+        umidade = registro[2]
+        horas_checkin = registro[3]
+
+        resultado = classificar(temperatura, umidade, horas_checkin)
+        estado = resultado[0]
+        mensagem = resultado[1]
+
+        print(hora, "|", temperatura, "°C |", umidade, "% |", horas_checkin, "h |", estado, "|", mensagem)
+
+
+# ---------------- Menu do nosso Programa ----------------
 def main():
     opcao = ""
 
@@ -43,7 +96,7 @@ def main():
         if opcao == "1":
             print("fazer check-in")
         elif opcao == "2":
-            print("leituras do dia")
+            mostrar_leituras()
         elif opcao == "3":
             print("resumo do dia")
         elif opcao == "4":
