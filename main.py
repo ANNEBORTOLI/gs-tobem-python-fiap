@@ -166,13 +166,24 @@ def ler_numero(pergunta, minimo, maximo):
 def fazer_checkin():
     print()
     print("Check-in: conte como está o ambiente agora.")
+    hora = ler_numero("Hora do check-in (0 a 24): ", 0, 24)
     temperatura = ler_numero("Temperatura (°C): ", 0, 60)
     umidade = ler_numero("Umidade (%): ", 0, 100)
 
-    resultado = classificar(temperatura, umidade, 0)   # check-in feito agora: 0 h
+    # Monta a hora no mesmo formato dos registros, como "08:00"
+    hora_inteira = int(hora)
+    if hora_inteira < 10:
+        hora_texto = "0" + str(hora_inteira) + ":00"
+    else:
+        hora_texto = str(hora_inteira) + ":00"
+
+    # Guarda o check-in no histórico do dia (0 h, porque acabou fazer)
+    registros.append([hora_texto, temperatura, umidade, 0])
+
+    resultado = classificar(temperatura, umidade, 0)
 
     print()
-    print("Check-in registrado! Obrigado por avisar que está bem.")
+    print("Check-in registrado às", hora_texto, "! Obrigado por avisar que está bem.")
     print("Ambiente agora:", resultado[0], "-", resultado[1])
 
 
