@@ -141,6 +141,54 @@ def mostrar_resumo():
     if qtd_perigo > 0:
         print("AVISO: houve leituras em PERIGO. Beba água e mantenha a casa ventilada.")
 
+# ---------------- Verifica input de números ----------------
+def eh_numero(texto):
+    '''Aceita números inteiros ou com um ponto decimal, como "25" ou "25.5".'''
+    sem_ponto = texto.replace(".", "", 1)
+    return sem_ponto.isdigit()
+
+
+def ler_numero(pergunta, minimo, maximo):
+    while True:
+        texto = input(pergunta).strip()
+        texto = texto.replace(",", ".")   # aceita 25,5 ou 25.5
+
+        if not eh_numero(texto):
+            print("Entrada inválida. Digite apenas números, como 25 ou 25.5.")
+        else:
+            valor = float(texto)
+            if valor < minimo or valor > maximo:
+                print("Valor fora da faixa. Digite entre", minimo, "e", maximo)
+            else:
+                return valor
+
+
+def fazer_checkin():
+    print()
+    print("Check-in: conte como está o ambiente agora.")
+    temperatura = ler_numero("Temperatura (°C): ", 0, 60)
+    umidade = ler_numero("Umidade (%): ", 0, 100)
+
+    resultado = classificar(temperatura, umidade, 0)   # check-in feito agora: 0 h
+
+    print()
+    print("Check-in registrado! Obrigado por avisar que está bem.")
+    print("Ambiente agora:", resultado[0], "-", resultado[1])
+
+
+def testar_leitura():
+    print()
+    print("Testar uma leitura")
+    temperatura = ler_numero("Temperatura (°C): ", 0, 60)
+    umidade = ler_numero("Umidade (%): ", 0, 100)
+    horas_checkin = ler_numero("Horas desde o último check-in: ", 0, 48)
+
+    resultado = classificar(temperatura, umidade, horas_checkin)
+
+    print()
+    print("Estado:", resultado[0])
+    print("Aviso:", resultado[1])
+
 
 # ---------------- Menu do nosso Programa ----------------
 def main():
@@ -158,13 +206,13 @@ def main():
         opcao = input("> ").strip()
 
         if opcao == "1":
-            print("fazer check-in")
+            fazer_checkin()
         elif opcao == "2":
             mostrar_leituras()
         elif opcao == "3":
             mostrar_resumo()
         elif opcao == "4":
-            print("testar uma leitura")
+            testar_leitura()
         elif opcao == "5":
             print("regras e limites")
         elif opcao == "0":
