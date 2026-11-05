@@ -26,7 +26,7 @@ registros = [
 ]
 
 # ---------------- Classificação dos Sensores ----------------
-# Seguimos a ordem de Edge: a primeira condição verdadeira vence.
+# Segui a ordem de Edge: a primeira condição verdadeira ganha.
 def classificar(temperatura, umidade, horas_checkin):
     if horas_checkin >= HORAS_PERIGO:
         estado = "PERIGO"
@@ -78,6 +78,70 @@ def mostrar_leituras():
         print(hora, "|", temperatura, "°C |", umidade, "% |", horas_checkin, "h |", estado, "|", mensagem)
 
 
+# ---------------- Resumo ----------------
+def calcular_resumo(lista):
+    ''' Devolve [média da temperatura, maior temperatura, hora da maior, 
+    qtd em alerta, qtd em perigo]'''
+    soma = 0
+    maior = lista[0][1]
+    hora_maior = lista[0][0]
+    qtd_alerta = 0
+    qtd_perigo = 0
+
+    for registro in lista:
+        temperatura = registro[1]
+        soma = soma + temperatura
+
+        if temperatura > maior:
+            maior = temperatura
+            hora_maior = registro[0]
+
+        resultado = classificar(registro[1], registro[2], registro[3])
+        if resultado[0] != "OK":
+            qtd_alerta += 1
+        if resultado[0] == "PERIGO":
+            qtd_perigo += 1
+
+    media = soma / len(lista)
+    return [media, maior, hora_maior, qtd_alerta, qtd_perigo]
+
+
+    lista_teste = [
+        ["10:00", 20, 50, 0],   # OK
+        ["11:00", 30, 50, 0],   # ATENÇÃO (calor)
+        ["12:00", 34, 50, 0],   # PERIGO (calor perigoso)
+        ["13:00", 24, 50, 0],   # OK
+    ]
+    # Esperado: média 27.0, maior 34 às 12:00, 2 em alerta, 1 em perigo
+    resumo = calcular_resumo(lista_teste)
+
+    if resumo == [27.0, 34, "12:00", 2, 1]:
+        print("Teste do resumo: PASSOU")
+    else:
+        print("Teste do resumo: FALHOU -> obtido:", resumo)
+
+
+def mostrar_resumo():
+    resumo = calcular_resumo(registros)
+    media = resumo[0]
+    maior = resumo[1]
+    hora_maior = resumo[2]
+    qtd_alerta = resumo[3]
+    qtd_perigo = resumo[4]
+    total = len(registros)
+    percentual = qtd_alerta / total * 100
+
+    print()
+    print("Resumo do dia", DATA)
+    print("Média da temperatura:", round(media, 1), "°C")
+    print("Maior temperatura:", maior, "°C às", hora_maior)
+    print("Leituras em alerta (ATENÇÃO ou PERIGO):", qtd_alerta, "de", total, "-", round(percentual, 1), "%")
+    print("Leituras em PERIGO:", qtd_perigo, "de", total)
+
+    if qtd_perigo > 0:
+        print("AVISO: houve leituras em PERIGO. Beba água e mantenha a casa ventilada.")
+
+
 # ---------------- Menu do nosso Programa ----------------
 def main():
     opcao = ""
@@ -98,7 +162,7 @@ def main():
         elif opcao == "2":
             mostrar_leituras()
         elif opcao == "3":
-            print("resumo do dia")
+            mostrar_resumo()
         elif opcao == "4":
             print("testar uma leitura")
         elif opcao == "5":
